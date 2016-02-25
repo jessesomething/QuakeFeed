@@ -61,35 +61,6 @@ class MainGUI():
         exit.pack()
         exit.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.333)
 
-    # def _set_main(self):
-    #     mainbar = tk.Frame(
-    #         width=self.main_window_width, bg=self.main_bg_color,
-    #         height=self.window_height, borderwidth=5)
-    #     mainbar.pack(expand=True, fill='both', side='right')
-    #     def CreateTable(self):
-    #         tv = Treeview(self)
-    #         tv['columns'] = ('location', 'time', 'magnitude', 'lat', 'long')
-    #         tv.heading("#0", text='Events', anchor='w')
-    #         tv.column("#0", anchor='w')
-    #         tv.heading('location', text='Location')
-    #         tv.column('location', anchor='center', width=100)
-    #         tv.heading('time', text='time')
-    #         tv.column('time', anchor='center', width=100)
-    #         tv.heading('magnitude', text='Magnitude')
-    #         tv.column('magnitude', anchor='center', width=100)
-    #         tv.heading('lat', text='Latitude')
-    #         tv.column('lat', anchor='center', width=100)
-    #         tv.heading('long', text='Longitude')
-    #         tv.column('long', anchor='center', width=100)
-    #         tv.grid(sticky=(N,S,W,E))
-    #         self.treeview = tv
-    #         self.grid_rowconfigure(0, weight=1)
-    #         self.grid_columnconfigure(0, weight=1)
-    #
-    #     def LoadTable(self):
-    #         self.treeview.insert('', 'end', text="First", values=('100', '101', 'Yep'))
-
-
     def _show_quakes_week(self):
         self.main_quakes_day.destroy()
         self.main_quakes_day.destroy()
@@ -100,13 +71,16 @@ class MainGUI():
                                             width=self.main_window_width, height=self.window_height)
         self.main_quakes_day.pack(expand=True, fill='both', side='right')
 
+        # root = Tk()
+        QuakeFrame.CreateUI(self.main_quakes_day)
+        self.root.mainloop()
 
 
         # tree.insert('', 'end', 'widgets', text='Widget Tour')
         # tree['columns'] = ('size', 'modified', 'owner')
         # tree.heading('size', width=100, anchor='center')
-
-        self.root.mainloop()
+        #
+        # self.root.mainloop()
 
     def _show_quakes_day(self):
         self.main_quakes_day.destroy()
@@ -118,6 +92,35 @@ class MainGUI():
         self.main_quakes_week.pack(expand=True, fill='both', side='right')
         self.root.mainloop()
 
+
+class QuakeFrame(Frame):
+    def __init__(self, parent):
+        Frame.__init__(self, parent)
+        self.CreateUI()
+        self.LoadTable()
+        self.grid(sticky = (N,S,W,E))
+        parent.grid_rowconfigure(0, weight = 1)
+        parent.grid_columnconfigure(0, weight = 1)
+
+    def CreateUI(self):
+        tv = Treeview(self)
+        tv['columns'] = ('starttime', 'endtime', 'status')
+        tv.heading("#0", text='Location', anchor='w')
+        tv.column("#0", anchor="w")
+        tv.heading('starttime', text='Start Time')
+        tv.column('starttime', anchor='center', width=100)
+        tv.heading('endtime', text='End Time')
+        tv.column('endtime', anchor='center', width=100)
+        tv.heading('status', text='Status')
+        tv.column('status', anchor='center', width=100)
+        tv.grid(sticky = (N,S,W,E))
+        self.treeview = tv
+        self.grid_rowconfigure(0, weight = 1)
+        self.grid_columnconfigure(0, weight = 1)
+
+    def LoadTable(self):
+        self.treeview.insert('', 'end', text="First", values=('10:00',
+                             '10:10', 'Ok'))
 
 
 
