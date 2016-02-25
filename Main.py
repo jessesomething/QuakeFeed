@@ -6,20 +6,48 @@ import tkinter as tk
 from tkinter import *
 from tkinter.ttk import *
 
+eventList = []
 
-
-url = "http://earthquake-report.com/feeds/recent-eq?json"
+url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
 r = requests.get(url)
 data = r.text
 
-soup = bs4.BeautifulSoup(data, "html.parser")
-print(soup)
+print(data)
 
 quakes = json.loads(data)
 
-for events in quakes:
-    print(events['location'] + "\nLat: " + events['latitude'] + "\nLong: " +
-          events['longitude'] + "\nMagnitude: " + events['magnitude'] + "\n")
+# properties = quakes['features'][0]['properties']['mag']
+
+for features in quakes['features']:
+    print(features)
+    for properties in features['properties']:
+        for mag in properties['mag']:
+            print(mag)
+
+#
+# for events in quakes:
+#
+#     print(events['location'] + "\nLat: " + events['latitude'] + "\nLong: " +
+#           events['longitude'] + "\nMagnitude: " + events['magnitude'] + "\n")
+
+# url = "http://earthquake-report.com/feeds/recent-eq?json"
+# r = requests.get(url)
+# data = r.text
+#
+# soup = bs4.BeautifulSoup(data, "html.parser")
+# print(soup)
+#
+# quakes = json.loads(data)
+#
+#
+# for events in quakes:
+#
+#     print(events['location'] + "\nLat: " + events['latitude'] + "\nLong: " +
+#           events['longitude'] + "\nMagnitude: " + events['magnitude'] + "\n")
+
+class Events():
+    def __init__(self, name, location, lat, long, tsunami, ):
+        self.name = name
 
 class MainGUI():
     def __init__(self):
