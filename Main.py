@@ -73,6 +73,7 @@ class MainGUI():
 
         # root = Tk()
         QuakeFrame.CreateUI(self.main_quakes_day)
+        QuakeFrame.LoadTable(self.main_quakes_day)
         self.root.mainloop()
 
 
@@ -95,7 +96,7 @@ class MainGUI():
 
 class QuakeFrame(Frame):
     def __init__(self, parent):
-        Frame.__init__(self, parent)
+        Frame.__init__(parent)
         self.CreateUI()
         self.LoadTable()
         self.grid(sticky = (N,S,W,E))
@@ -104,22 +105,25 @@ class QuakeFrame(Frame):
 
     def CreateUI(self):
         tv = Treeview(self)
-        tv['columns'] = ('starttime', 'endtime', 'status')
-        tv.heading("#0", text='Location', anchor='w')
-        tv.column("#0", anchor="w")
-        tv.heading('starttime', text='Start Time')
-        tv.column('starttime', anchor='center', width=100)
-        tv.heading('endtime', text='End Time')
-        tv.column('endtime', anchor='center', width=100)
-        tv.heading('status', text='Status')
-        tv.column('status', anchor='center', width=100)
+        tv['columns'] = ('location', 'magnitude', 'latitude', 'longitude')
+        tv.heading('#0', text='Location', anchor='w')
+        tv.column('location', anchor='center', width=200)
+        tv.heading('#1', text='Magnitude')
+        tv.column('magnitude', anchor='center', width=50)
+        tv.heading('#2', text='Latitude')
+        tv.column('latitude', anchor='center', width=100)
+        tv.heading('#3', text='Longitude')
+        tv.column('longitude', anchor='center', width=100)
         tv.grid(sticky = (N,S,W,E))
         self.treeview = tv
         self.grid_rowconfigure(0, weight = 1)
         self.grid_columnconfigure(0, weight = 1)
 
     def LoadTable(self):
-        self.treeview.insert('', 'end', text="First", values=('10:00',
+        locText = "hello"
+        self.treeview.insert('', 'end', text=locText, values=('10:00',
+                             '10:10', 'Ok'))
+        self.treeview.insert('', 'end', text="Second", values=('10:00',
                              '10:10', 'Ok'))
 
 
