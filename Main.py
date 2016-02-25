@@ -21,12 +21,12 @@ for events in quakes:
     print(events['location'] + "\nLat: " + events['latitude'] + "\nLong: " +
           events['longitude'] + "\nMagnitude: " + events['magnitude'] + "\n")
 
-class MainGUI(Frame):
-    def __init__(self,parent):
-        Frame.__init__(self,parent)
+class MainGUI():
+    def __init__(self):
+
         # self._set_main().CreateTable()
         # self._set_main().LoadTable()
-        self.grid(sticky = (N,S,W,E))
+        # self.grid(sticky = (N,S,W,E))
         self.root = tk.Tk()
         self.root.title("QuakeFeed")
         self.window_height = 600
@@ -122,9 +122,7 @@ class MainGUI(Frame):
 
 
 def start_gui():
-    root = Frame()
-    MainGUI(root)
-    root.mainloop()
+    MainGUI().mainloop()
 
 def quit():
     exit()
