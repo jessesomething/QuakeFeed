@@ -5,24 +5,28 @@ import sqlite3
 import tkinter as tk
 from tkinter import *
 from tkinter.ttk import *
+import decimal
 
 eventList = []
 
 url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
 r = requests.get(url)
 data = r.text
-
-print(data)
+#
+# print(data)
 
 quakes = json.loads(data)
 
+
 # properties = quakes['features'][0]['properties']['mag']
 
-for features in quakes['features']:
-    print(features)
-    for properties in features['properties']:
-        for mag in properties['mag']:
-            print(mag)
+for q in quakes['features']:
+    # print(q)
+    print(q['properties']['mag'])
+
+
+
+# print(quakes['features'])
 
 #
 # for events in quakes:
