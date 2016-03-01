@@ -9,20 +9,14 @@ import decimal
 
 eventList = []
 
-url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
-r = requests.get(url)
-data = r.text
+# url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
+# r = requests.get(url)
+# data = r.text
+# quakes = json.loads(data)
 #
-# print(data)
-
-quakes = json.loads(data)
-
-
-# properties = quakes['features'][0]['properties']['mag']
-
-for q in quakes['features']:
-    # print(q)
-    print(q['properties']['mag'])
+# for q in quakes['features']:
+#     QuakeFrame.LoadTable(self.main_quakes_day,lat=)
+#     print(q['properties']['mag'])
 
 
 
@@ -105,7 +99,20 @@ class MainGUI():
 
         # root = Tk()
         QuakeFrame.CreateUI(self.main_quakes_day)
-        QuakeFrame.LoadTable(self.main_quakes_day)
+        url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
+        r = requests.get(url)
+        data = r.text
+        quakes = json.loads(data)
+
+        for q in quakes['features']:
+            print(q)
+            loc = q['properties']['place']
+            mag = q['properties']['mag']
+            coord = q['geometry']['coordinates']
+
+            QuakeFrame.LoadTable(self.main_quakes_day,loc=loc,mag=mag,coord=coord)
+            # print(q['properties']['mag'])
+
         self.root.mainloop()
 
 
@@ -123,40 +130,43 @@ class MainGUI():
         self.main_quakes_week = tk.Frame(self.root, bg=self.main_bg_color,
                                             width=self.main_window_width, height=self.window_height)
         self.main_quakes_week.pack(expand=True, fill='both', side='right')
+        QuakeFrame.CreateUI(self.main_quakes_day)
+        # QuakeFrame.LoadTable(self.main_quakes_day)
         self.root.mainloop()
 
 
 class QuakeFrame(Frame):
     def __init__(self, parent):
         Frame.__init__(parent)
+        url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
+        # r = requests.get(url)
+        # data = r.text
+        # quakes = json.loads(data)
+        #
+        # for q in quakes['features']:
+        #     print(q['properties']['mag'])
         self.CreateUI()
-        self.LoadTable()
+        # self.LoadTable(loc=0,mag=0,coord=0)
         self.grid(sticky = (N,S,W,E))
         parent.grid_rowconfigure(0, weight = 1)
         parent.grid_columnconfigure(0, weight = 1)
 
     def CreateUI(self):
         tv = Treeview(self)
-        tv['columns'] = ('location', 'magnitude', 'latitude', 'longitude')
+        tv['columns'] = ('location', 'magnitude', 'coordinates')
         tv.heading('#0', text='Location', anchor='w')
         tv.column('location', anchor='center', width=200)
         tv.heading('#1', text='Magnitude')
         tv.column('magnitude', anchor='center', width=50)
-        tv.heading('#2', text='Latitude')
-        tv.column('latitude', anchor='center', width=100)
-        tv.heading('#3', text='Longitude')
-        tv.column('longitude', anchor='center', width=100)
+        tv.heading('#2', text='Coordinates')
+        tv.column('coordinates', anchor='center', width=100)
         tv.grid(sticky = (N,S,W,E))
         self.treeview = tv
         self.grid_rowconfigure(0, weight = 1)
         self.grid_columnconfigure(0, weight = 1)
 
-    def LoadTable(self):
-        locText = "hello"
-        self.treeview.insert('', 'end', text=locText, values=('10:00',
-                             '10:10', 'Ok'))
-        self.treeview.insert('', 'end', text="Second", values=('10:00',
-                             '10:10', 'Ok'))
+    def LoadTable(self, loc, mag, coord):
+        self.treeview.insert('', 'end', text=loc, values=(mag, coord))
 
 
 
