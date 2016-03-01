@@ -6,51 +6,15 @@ import tkinter as tk
 from tkinter import *
 from tkinter import ttk
 from tkinter.ttk import *
-import time
 from datetime import datetime
 import webbrowser
 
-eventList = []
-
-
-# url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
-# r = requests.get(url)
-# data = r.text
-# quakes = json.loads(data)
-#
-# for q in quakes['features']:
-#     QuakeFrame.LoadTable(self.main_quakes_day,lat=)
-#     print(q['properties']['mag'])
-
-
-
-# print(quakes['features'])
-
-#
-# for events in quakes:
-#
-#     print(events['location'] + "\nLat: " + events['latitude'] + "\nLong: " +
-#           events['longitude'] + "\nMagnitude: " + events['magnitude'] + "\n")
-
-# url = "http://earthquake-report.com/feeds/recent-eq?json"
-# r = requests.get(url)
-# data = r.text
-#
 # soup = bs4.BeautifulSoup(data, "html.parser")
 # print(soup)
 #
-# quakes = json.loads(data)
+# class Event():
+#     def __init__(self):
 #
-#
-# for events in quakes:
-#
-#     print(events['location'] + "\nLat: " + events['latitude'] + "\nLong: " +
-#           events['longitude'] + "\nMagnitude: " + events['magnitude'] + "\n")
-
-# class Events():
-#     def __init__(self, name, location, lat, long, tsunami, ):
-#         self.name = name
-
 
 class MainGUI():
     def __init__(self):
@@ -84,8 +48,7 @@ class MainGUI():
 
         mag_combobox = ttk.Combobox(self.root, values=('this', 'that', 'and the other'))
         mag_combobox.pack()
-        mag_combobox.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.22,)
-
+        mag_combobox.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.22, )
 
         # get_link_button = tk.Button(self.root, text="Go to link", command=self._show_quakes_day)
         # get_link_button.pack()
@@ -95,23 +58,21 @@ class MainGUI():
         quit_button.pack()
         quit_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.333)
 
+
+
     def _show_quakes_week(self):
         self.main_quakes_day.destroy()
         self.main_quakes_day.destroy()
         self.root.update()
         self.root.minsize(self.main_window_width, self.window_height)
 
-        # get_link = tk.Button(self.root, text="Get link")
-        # get_link.pack()
-        # get_link.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.22)
-
         self.main_quakes_day = tk.Frame(self.root, bg=self.main_bg_color,
                                         width=self.main_window_width, height=self.window_height)
         self.main_quakes_day.pack(expand=True, fill='both', side='right')
 
-        get_link_button = tk.Button(self.root, text="Go to link", command=self.get_info)
-        get_link_button.pack()
-        get_link_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=0.3, rely=.24)
+        # get_link_button = tk.Button(self.root, text="Go to link", command=self.get_info)
+        # get_link_button.pack()
+        # get_link_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=0.3, rely=.24)
 
         # root = Tk()
         QuakeFrame.CreateUI(self.main_quakes_day)
@@ -143,14 +104,17 @@ class MainGUI():
                                  time_utc=time_readable, date_utc=date_readable)
             # print(q['properties']['mag'])
 
-
-
-
-
         def print_something():
             print('something')
 
-        print_something()
+
+        # tv = Treeview(self)
+        # children = tv.get_children()
+        # for child in children:
+        #     print(tv.set(child, column="#3"))
+        # print_something()
+
+
 
 
 
@@ -161,12 +125,6 @@ class MainGUI():
         # tree.heading('size', width=100, anchor='center')
         #
         # self.root.mainloop()
-
-    def get_info(self):
-        tv = Treeview()
-        children = tv.get_children()
-        for child in children:
-            print(tv.set(child))
 
     def _show_quakes_day(self):
         self.main_quakes_day.destroy()
@@ -184,16 +142,7 @@ class MainGUI():
 class QuakeFrame(Frame):
     def __init__(self, parent):
         Frame.__init__(parent)
-        # url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
-        # url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson"
-        # r = requests.get(url)
-        # data = r.text
-        # quakes = json.loads(data)
-        #
-        # for q in quakes['features']:
-        #     print(q['properties']['mag'])
         self.CreateUI()
-        # self.LoadTable(loc=0,mag=0,coord=0)
         self.grid(sticky=(N, S, W, E))
         parent.grid_rowconfigure(0, weight=1)
         parent.grid_columnconfigure(0, weight=1)
@@ -221,15 +170,11 @@ class QuakeFrame(Frame):
 
     def LoadTable(self, loc, link, mag, coord, tsunami, time_utc, date_utc):
         self.treeview.insert('', 'end', text=loc, values=(link, mag, coord, tsunami, time_utc, date_utc))
+
         # tv = self.treeview
         # children = tv.get_children()
         # for child in children:
         #     print(tv.set(child, column="#3"))
-
-    #
-    # def get_focus(self):
-    #     self.treeview.focus_get()
-
 
 
 def start_gui():
