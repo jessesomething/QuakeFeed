@@ -4,6 +4,7 @@ import requests
 import sqlite3
 import tkinter as tk
 from tkinter import *
+from tkinter import ttk
 from tkinter.ttk import *
 import time
 from datetime import datetime
@@ -81,6 +82,11 @@ class MainGUI():
         last_week_button.pack()
         last_week_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.12)
 
+        mag_combobox = ttk.Combobox(self.root, values=('this', 'that', 'and the other'))
+        mag_combobox.pack()
+        mag_combobox.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.22,)
+
+
         # get_link_button = tk.Button(self.root, text="Go to link", command=self._show_quakes_day)
         # get_link_button.pack()
         # get_link_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=0.3, rely=.24)
@@ -95,9 +101,9 @@ class MainGUI():
         self.root.update()
         self.root.minsize(self.main_window_width, self.window_height)
 
-        get_link = tk.Button(self.root, text="Get link")
-        get_link.pack()
-        get_link.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.22)
+        # get_link = tk.Button(self.root, text="Get link")
+        # get_link.pack()
+        # get_link.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.22)
 
         self.main_quakes_day = tk.Frame(self.root, bg=self.main_bg_color,
                                         width=self.main_window_width, height=self.window_height)
@@ -215,10 +221,10 @@ class QuakeFrame(Frame):
 
     def LoadTable(self, loc, link, mag, coord, tsunami, time_utc, date_utc):
         self.treeview.insert('', 'end', text=loc, values=(link, mag, coord, tsunami, time_utc, date_utc))
-        tv = self.treeview
-        children = tv.get_children()
-        for child in children:
-            print(tv.set(child, column="#2"))
+        # tv = self.treeview
+        # children = tv.get_children()
+        # for child in children:
+        #     print(tv.set(child, column="#3"))
 
     #
     # def get_focus(self):
