@@ -53,9 +53,6 @@ eventList = []
 
 class MainGUI():
     def __init__(self):
-        # self._set_main().CreateTable()
-        # self._set_main().LoadTable()
-        # self.grid(sticky = (N,S,W,E))
         self.root = tk.Tk()
         self.root.title("QuakeFeed")
         self.window_height = 600
@@ -66,7 +63,6 @@ class MainGUI():
         self.side_bg_color = 'white'
         self.main_bg_color = 'white'
         self._set_side()
-        # self._set_main()
         self.main_quakes_day = tk.Frame(self.root)
         self.main_quakes_week = tk.Frame(self.root)
         self._show_quakes_week()
@@ -77,19 +73,21 @@ class MainGUI():
             height=self.window_height, borderwidth=5)
         sidebar.pack(expand=True, fill='both', side='left', anchor='nw')
 
-        lastDay = tk.Button(self.root, text="Last Day", command=self._show_quakes_day)
-        lastDay.pack()
-        lastDay.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.013)
+        last_day_button = tk.Button(self.root, text="Last Day", command=self._show_quakes_day)
+        last_day_button.pack()
+        last_day_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.013)
 
-        lastWeek = tk.Button(self.root, text="Last Week", command=self._show_quakes_week)
-        lastWeek.pack()
-        lastWeek.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.12)
+        last_week_button = tk.Button(self.root, text="Last Week", command=self._show_quakes_week)
+        last_week_button.pack()
+        last_week_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.12)
 
+        # get_link_button = tk.Button(self.root, text="Go to link", command=self._show_quakes_day)
+        # get_link_button.pack()
+        # get_link_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=0.3, rely=.24)
 
-
-        exit = tk.Button(self.root, text="Quit", command=quit)
-        exit.pack()
-        exit.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.333)
+        quit_button = tk.Button(self.root, text="Quit", command=quit)
+        quit_button.pack()
+        quit_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.333)
 
     def _show_quakes_week(self):
         self.main_quakes_day.destroy()
@@ -104,6 +102,10 @@ class MainGUI():
         self.main_quakes_day = tk.Frame(self.root, bg=self.main_bg_color,
                                         width=self.main_window_width, height=self.window_height)
         self.main_quakes_day.pack(expand=True, fill='both', side='right')
+
+        get_link_button = tk.Button(self.root, text="Go to link", command=self.get_info)
+        get_link_button.pack()
+        get_link_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=0.3, rely=.24)
 
         # root = Tk()
         QuakeFrame.CreateUI(self.main_quakes_day)
@@ -137,10 +139,13 @@ class MainGUI():
 
 
 
+
+
         def print_something():
             print('something')
 
         print_something()
+
 
 
         self.root.mainloop()
@@ -150,6 +155,12 @@ class MainGUI():
         # tree.heading('size', width=100, anchor='center')
         #
         # self.root.mainloop()
+
+    def get_info(self):
+        tv = Treeview()
+        children = tv.get_children()
+        for child in children:
+            print(tv.set(child))
 
     def _show_quakes_day(self):
         self.main_quakes_day.destroy()
@@ -204,6 +215,11 @@ class QuakeFrame(Frame):
 
     def LoadTable(self, loc, link, mag, coord, tsunami, time_utc, date_utc):
         self.treeview.insert('', 'end', text=loc, values=(link, mag, coord, tsunami, time_utc, date_utc))
+        tv = self.treeview
+        children = tv.get_children()
+        for child in children:
+            print(tv.set(child, column="#2"))
+
     #
     # def get_focus(self):
     #     self.treeview.focus_get()
