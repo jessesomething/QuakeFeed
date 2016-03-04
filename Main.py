@@ -9,12 +9,69 @@ from tkinter.ttk import *
 from datetime import datetime
 import webbrowser
 
+
 # soup = bs4.BeautifulSoup(data, "html.parser")
 # print(soup)
 #
 # class Event():
 #     def __init__(self):
 #
+
+class QuakeFrame(Frame):
+    def __init__(self, parent):
+        Frame.__init__(parent)
+        self.root = tk.Tk()
+        self.tree = ttk.Treeview()
+        global tree
+        tree = self.tree
+        self.tree.pack()
+        self.CreateUI()
+        self.grid(sticky=(N, S, W, E))
+        self.tree.bind("<ButtonPress-1>", self.OnClick)
+        parent.grid_rowconfigure(0, weight=1)
+        parent.grid_columnconfigure(0, weight=1)
+
+    def CreateUI(self):
+        tv = ttk.Treeview(self)
+        global tv
+        tv['columns'] = ('location', 'link', 'magnitude', 'coordinates', 'tsunami', 'time')
+        tv.heading('#0', text='Location', anchor='w')
+        tv.column('location', anchor='center', width=100)
+        tv.heading('#1', text='Link')
+        tv.column('link', anchor='center', width=75)
+        tv.heading('#2', text='Magnitude')
+        tv.column('magnitude', anchor='center', width=150)
+        tv.heading('#3', text='Coordinates')
+        tv.column('coordinates', anchor='center', width=55)
+        tv.heading('#4', text='Tsunami')
+        tv.column('tsunami', anchor='center', width=50)
+        tv.heading('#5', text='Time')
+        tv.column('time', anchor='center', width=100)
+        tv.heading('#6', text='Date')
+        tv.grid(sticky=(N, S, W, E))
+        # self.tv = tv
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+    def LoadTable(self, loc, link, mag, coord, tsunami, time_utc, date_utc):
+        tv.insert('', 'end', text=loc, values=(link, mag, coord, tsunami, time_utc, date_utc))
+
+
+        # Here's where I can fetch each of the columns when the table
+        # loaded but cannot figure out how to run this from the main frame
+        # tv = self.tv
+        # children = tv.get_children()
+
+
+        # for child in children:
+        #     print(tv.set(child, column="#2"))
+
+    #     sel_item = Treeview.focus(item)
+
+    def OnClick(self, event):
+        item = self.tree.selection()[0]
+        print('you clicked on', self.tree.item(item, 'text'))
+
 
 class MainGUI():
     def __init__(self):
@@ -58,11 +115,10 @@ class MainGUI():
         quit_button.pack()
         quit_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.333)
 
-
-
     def _show_quakes_week(self):
         self.main_quakes_day.destroy()
         self.main_quakes_day.destroy()
+
         self.root.update()
         self.root.minsize(self.main_window_width, self.window_height)
 
@@ -74,16 +130,17 @@ class MainGUI():
         # get_link_button.pack()
         # get_link_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=0.3, rely=.24)
 
-        # root = Tk()
+
         QuakeFrame.CreateUI(self.main_quakes_day)
         url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
         # url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson"
-        r = requests.get(url)
+
+        r = requests.get("")
         data = r.text
         quakes = json.loads(data)
 
         for q in quakes['features']:
-            print(q)
+            # print(q)
             url = q['properties']['url']
             loc = q['properties']['place']
             mag = q['properties']['mag']
@@ -104,27 +161,24 @@ class MainGUI():
                                  time_utc=time_readable, date_utc=date_readable)
             # print(q['properties']['mag'])
 
-        def print_something():
-            print('something')
+        # item = tree.selection(items=2)
+        # print('test', self.tree.item(item,"text"))
+        # self.tree = ttk.Treeview.get_children(tv)
+        children = tv.get_children()
 
+        for child in children:
+            print(tv.set(child, column="#1"))
 
-        # tv = Treeview(self)
-        # children = tv.get_children()
+        tree.get_children()
+
+        # This is where I would assume the row values would appear
+        # correctly but it doesn't display anything, kind of like
+        # the table is blank.
         # for child in children:
-        #     print(tv.set(child, column="#3"))
-        # print_something()
-
-
-
-
+        #     # print(tv.item(child)["#3"])
+        #     print(tv.column(child)["#3"])
 
         self.root.mainloop()
-
-        # tree.insert('', 'end', 'widgets', text='Widget Tour')
-        # tree['columns'] = ('size', 'modified', 'owner')
-        # tree.heading('size', width=100, anchor='center')
-        #
-        # self.root.mainloop()
 
     def _show_quakes_day(self):
         self.main_quakes_day.destroy()
@@ -137,44 +191,6 @@ class MainGUI():
         QuakeFrame.CreateUI(self.main_quakes_day)
         # QuakeFrame.LoadTable(self.main_quakes_day)
         self.root.mainloop()
-
-
-class QuakeFrame(Frame):
-    def __init__(self, parent):
-        Frame.__init__(parent)
-        self.CreateUI()
-        self.grid(sticky=(N, S, W, E))
-        parent.grid_rowconfigure(0, weight=1)
-        parent.grid_columnconfigure(0, weight=1)
-
-    def CreateUI(self):
-        tv = Treeview(self)
-        tv['columns'] = ('location', 'link', 'magnitude', 'coordinates', 'tsunami', 'time')
-        tv.heading('#0', text='Location', anchor='w')
-        tv.column('location', anchor='center', width=100)
-        tv.heading('#1', text='Link')
-        tv.column('link', anchor='center', width=75)
-        tv.heading('#2', text='Magnitude')
-        tv.column('magnitude', anchor='center', width=150)
-        tv.heading('#3', text='Coordinates')
-        tv.column('coordinates', anchor='center', width=55)
-        tv.heading('#4', text='Tsunami')
-        tv.column('tsunami', anchor='center', width=50)
-        tv.heading('#5', text='Time')
-        tv.column('time', anchor='center', width=100)
-        tv.heading('#6', text='Date')
-        tv.grid(sticky=(N, S, W, E))
-        self.treeview = tv
-        self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(0, weight=1)
-
-    def LoadTable(self, loc, link, mag, coord, tsunami, time_utc, date_utc):
-        self.treeview.insert('', 'end', text=loc, values=(link, mag, coord, tsunami, time_utc, date_utc))
-
-        # tv = self.treeview
-        # children = tv.get_children()
-        # for child in children:
-        #     print(tv.set(child, column="#3"))
 
 
 def start_gui():
