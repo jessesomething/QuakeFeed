@@ -45,16 +45,15 @@ class QuakeFrame(Frame):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
+    def clear_table(self):
+        tv.destroy()
+
     def LoadTable(self, loc, link, mag, coord, tsunami, time_utc, date_utc):
         tv.insert('', 'end', text=loc, values=(link, mag, coord, tsunami, time_utc, date_utc))
         children = tv.get_children()
 
         # for child in children:
         #     print(tv.set(child, column="#2"))
-
-    def on_click(self, event):
-        item = self.tree.selection()[0]
-        print("you clicked on ", self.tree.item(item, "text"))
 
 class MainGUI():
     def __init__(self):
@@ -68,56 +67,37 @@ class MainGUI():
         self.side_window_width = 200
         self.side_bg_color = 'white'
         self.main_bg_color = 'white'
-        self._set_side()
+        self.set_sidebar()
         self.main_quakes_day = ttk.Frame(self.root)
-        self.main_quakes_week = tk.Frame(self.root)
-        self._show_quakes_week()
+        self.show_quakes()
 
     def enter(self, event):
         print('Someone pressed enter')
 
-    def motion(self, event):
-        print('Mouse is at: %s %s' % (event.x, event.y))
-        #
-        # def OnClick(self, event):
-        #     item = self.main_quakes_day.identify('item', event.y)
-        #     print('you clicked on', self.main_quakes_day.item(item, 'text'))
-        children = tv.get_children()
 
-        for child in children:
-            print(tv.set(child, column="#0"))
-
-    def _set_side(self):
+    def set_sidebar(self):
         sidebar = tk.Frame(
             self.root, width=self.side_window_width, bg=self.side_bg_color,
             height=self.window_height, borderwidth=5)
         sidebar.pack(expand=True, fill='both', side='left', anchor='nw')
 
-        last_day_button = tk.Button(self.root, text="Last Day", command=self._show_quakes_day)
-        last_day_button.pack()
-        last_day_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.013)
-
-        last_week_button = tk.Button(self.root, text="Last Week", command=self._show_quakes_week)
-        last_week_button.pack()
-        last_week_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.12)
+        refresh_button = tk.Button(self.root, text="Refresh", command=self.show_quakes)
+        refresh_button.pack()
+        refresh_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.01, rely=.013)
 
         # mag_combobox = ttk.Combobox(self.root, values=('this', 'that', 'and the other'))
         # mag_combobox.pack()
         # mag_combobox.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.22, )
 
-        # get_link_button = tk.Button(self.root, text="Go to link", command=self._show_quakes_day)
+        # get_link_button = tk.Button(self.root, text="Go to link", command=self.show_quakes)
         # get_link_button.pack()
         # get_link_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=0.3, rely=.24)
 
         quit_button = tk.Button(self.root, text="Quit", command=quit)
         quit_button.pack()
-        quit_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.333)
+        quit_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.01, rely=.90)
 
-    def select_location(self, event):
-        print()
-
-    def _show_quakes_week(self):
-        self.main_quakes_week.destroy()
+    def show_quakes(self):
         self.main_quakes_day.destroy()
         self.root.update()
         self.root.bind('<Double-Button-1>', self.select_item)
@@ -127,92 +107,121 @@ class MainGUI():
 
 
         QuakeFrame.CreateUI(self.main_quakes_day)
-        url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
-        # url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson"
+        # url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
+        url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson"
 
         r = requests.get(url)
         data = r.text
         quakes = json.loads(data)
-
         global country_list
         country_list = []
-        # country_list.append('Choose a country/state')
 
-        for q in quakes['features']:
-            # print(q)
-            url = q['properties']['url']
-            loc = q['properties']['place']
-            mag = q['properties']['mag']
-            coord = q['geometry']['coordinates']
-            tsunami = q['properties']['tsunami']
-            time_epoch = q['properties']['time']
-            time_stamp = time_epoch / 1000.0
-            time_readable = datetime.fromtimestamp(time_stamp).strftime('%H:%M:%S')
-            date_readable = datetime.fromtimestamp(time_stamp).strftime('%d-%m-%Y')
+        def populate_events(filter):
+            for i in tv.get_children():
+                tv.delete(i)
+            # try:
+            #     tv.destroy()
+            # except:
+            #     print("No table yet")
+            for q in quakes['features']:
+                url = q['properties']['url']
+                loc = q['properties']['place']
+                mag = q['properties']['mag']
+                coord = q['geometry']['coordinates']
+                tsunami = q['properties']['tsunami']
+                time_epoch = q['properties']['time']
+                time_stamp = time_epoch / 1000.0
+                time_readable = datetime.fromtimestamp(time_stamp).strftime('%H:%M:%S')
+                date_readable = datetime.fromtimestamp(time_stamp).strftime('%d-%m-%Y')
 
-            locStr = loc
-            # print(loc)
-            loc_split = loc.split(', ')
-            try:
-                if country_list.count(loc_split[1]) == 0:
-                    country_list.append(loc_split[1])
-                # print(loc_split[1])
-            except:
-                print('no more here')
-            # print(loc_split)
-            # country_state = loc_split[', ']
-            # print(country_state)
-            # country_list.append(country_state)
-            if tsunami == 0:
-                tsunami = 'No'
-            elif tsunami == 1:
-                tsunami = 'Yes'
+                if tsunami == 0:
+                    tsunami = 'No'
+                elif tsunami == 1:
+                    tsunami = 'Yes'
 
+                loc_split = loc.split(', ')
 
+                try:
+                    if country_list.count(loc_split[1]) == 0:
+                        country_list.append(loc_split[1])
+                    # print(loc_split[1])
+                except:
+                    break
 
-            QuakeFrame.LoadTable(self.main_quakes_day, loc=loc, link=url, mag=mag, coord=coord, tsunami=tsunami,
+                if filter == '':
+                    QuakeFrame.LoadTable(self.main_quakes_day, loc=loc, link=url, mag=mag, coord=coord, tsunami=tsunami,
                                  time_utc=time_readable, date_utc=date_readable)
 
-        for country in country_list:
-            print(country)
+                if filter == "All Countries/States":
+                    QuakeFrame.LoadTable(self.main_quakes_day, loc=loc, link=url, mag=mag, coord=coord, tsunami=tsunami,
+                                 time_utc=time_readable, date_utc=date_readable)
 
-        country_list.sort()
+                try:
+                    try:
+                        if filter == "Tsunamis Only":
+                            if tsunami == 'Yes':
+                                QuakeFrame.LoadTable(self.main_quakes_day, loc=loc, link=url, mag=mag, coord=coord, tsunami=tsunami,
+                            time_utc=time_readable, date_utc=date_readable)
+                        if filter == "Earthquakes Only":
+                            if tsunami == 'No':
+                                QuakeFrame.LoadTable(self.main_quakes_day, loc=loc, link=url, mag=mag, coord=coord, tsunami=tsunami,
+                            time_utc=time_readable, date_utc=date_readable)
+                    except:
+                        print('Something went wrong')
+                except:
+                    "Nothing chosen"
 
-        print(country_list)
 
-        country_list.insert(0,'Choose a Country/State')
 
-        locvar = StringVar()
+                try:
+                    country = loc_split[1]
+                    try:
+                        if country == filter:
+                            QuakeFrame.LoadTable(self.main_quakes_day, loc=loc, link=url, mag=mag, coord=coord, tsunami=tsunami,
+                            time_utc=time_readable, date_utc=date_readable)
+                    except:
+                        break
+                except:
+                    break
+
+
+            country_list.sort()
+            if country_list.count('All Countries/States') == 0:
+                country_list.insert(0,'All Countries/States')
+
+
+        def select_location(event):
+            location = loc_combobox.get()
+            print(loc_combobox.get())
+            populate_events(location)
+
+        def select_event_type(event):
+            event_type = event_combobox.get()
+            print(event_combobox.get())
+            populate_events(event_type)
+
         global locvar
+        locvar = StringVar()
         loc_combobox = ttk.Combobox(self.root, textvariable=locvar)
-        loc_combobox.bind('<<ComboboxSelected>>', print(locvar))
+        populate_events(locvar.get())
+        loc_combobox.bind('<<ComboboxSelected>>', select_location)
         loc_combobox.pack()
-        loc_combobox.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.22)
+        loc_combobox.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.01, rely=.12)
         loc_combobox['values'] = country_list
-
-
-
-
-        # print(loc_combobox.current(2))
         loc_combobox.current(0)
 
+        eventvar = StringVar()
+        options = ["All Events", "Tsunamis Only", "Earthquakes Only"]
+        event_combobox = ttk.Combobox(self.root, textvariable=eventvar, values=options)
+        event_combobox.bind('<<ComboboxSelected>>', select_event_type)
+        event_combobox.current(0)
+        event_combobox.pack()
+        event_combobox.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.01, rely=.24)
+
+
         self.main_quakes_day.pack(expand=True, fill='both', side='right')
-
         self.root.mainloop()
 
-
-
-    def _show_quakes_day(self):
-        self.main_quakes_day.destroy()
-        self.main_quakes_week.destroy()
-        self.root.update()
-        self.root.minsize(self.main_window_width, self.window_height)
-        self.main_quakes_week = tk.Frame(self.root, bg=self.main_bg_color,
-                                         width=self.main_window_width, height=self.window_height)
-        self.main_quakes_week.pack(expand=True, fill='both', side='right')
-        QuakeFrame.CreateUI(self.main_quakes_day)
-        # QuakeFrame.LoadTable(self.main_quakes_day)
-        self.root.mainloop()
 
     def select_item(self, event):
         item = tv.selection()[0]
