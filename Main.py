@@ -50,7 +50,7 @@ class QuakeFrame(Frame):
 
     def LoadTable(self, loc, link, mag, coord, tsunami, time_utc, date_utc):
         tv.insert('', 'end', text=loc, values=(link, mag, coord, tsunami, time_utc, date_utc))
-        children = tv.get_children()
+        # children = tv.get_children()
 
         # for child in children:
         #     print(tv.set(child, column="#2"))
@@ -105,10 +105,9 @@ class MainGUI():
         self.main_quakes_day = tk.Frame(self.root, bg=self.main_bg_color,
                                         width=self.main_window_width, height=self.window_height)
 
-
         QuakeFrame.CreateUI(self.main_quakes_day)
-        # url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
-        url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson"
+        url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson"
+        # url = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_month.geojson"
 
         r = requests.get(url)
         data = r.text
@@ -156,10 +155,16 @@ class MainGUI():
                     QuakeFrame.LoadTable(self.main_quakes_day, loc=loc, link=url, mag=mag, coord=coord, tsunami=tsunami,
                                  time_utc=time_readable, date_utc=date_readable)
 
+                if filter == "All Events":
+                    QuakeFrame.LoadTable(self.main_quakes_day, loc=loc, link=url, mag=mag, coord=coord, tsunami=tsunami,
+                                 time_utc=time_readable, date_utc=date_readable)
+
+                tsunami_count = 0
                 try:
                     try:
                         if filter == "Tsunamis Only":
                             if tsunami == 'Yes':
+                                tsunami_count = tsunami_count + 1
                                 QuakeFrame.LoadTable(self.main_quakes_day, loc=loc, link=url, mag=mag, coord=coord, tsunami=tsunami,
                             time_utc=time_readable, date_utc=date_readable)
                         if filter == "Earthquakes Only":
@@ -171,7 +176,8 @@ class MainGUI():
                 except:
                     "Nothing chosen"
 
-
+                if tsunami_count == 0:
+                    print('No tsunamis reported.')
 
                 try:
                     country = loc_split[1]
@@ -184,7 +190,7 @@ class MainGUI():
                 except:
                     break
 
-
+        # columns = ()
             country_list.sort()
             if country_list.count('All Countries/States') == 0:
                 country_list.insert(0,'All Countries/States')
@@ -226,7 +232,9 @@ class MainGUI():
     def select_item(self, event):
         item = tv.selection()[0]
         item_url = tv.set(item, column='#1')
-        r = requests.get(item_url)
+        # r = requests.get(item_url)
+        hazards_url = "http://earthquake.usgs.gov/hazards/products/scenario/"
+        r = requests.get(hazards_url)
         data = r.text
 
         # r = urllib.urlopen('')
@@ -236,14 +244,14 @@ class MainGUI():
         # events = soup.find('a')
         # print(events)
         # soup = BeautifulSoup(urlopen(item_url))A
-        # links = soup.find_all('a')
-        # for link in links:
-        #     print(link.get("href"))
+        links = soup.find_all('a')
+        for link in links:
+            print(link.get("href"))
         # print(soup)
         # tables = soup.find_all('footer class', class_='site-commonav')
         # print(tables)
         # print(soup.prettify()[0:5000])
-
+        Image("http://earthquake.usgs.gov/template/images/usgs.jpg")
 
 
         # for child in children:
