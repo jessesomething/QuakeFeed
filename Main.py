@@ -10,6 +10,7 @@ from tkinter.ttk import *
 from datetime import datetime
 import webbrowser
 from bs4 import BeautifulSoup
+from PIL import Image, ImageTk
 
 
 class QuakeFrame(Frame):
@@ -62,8 +63,8 @@ class MainGUI():
         self.root.title("QuakeFeed")
         self.window_height = 600
         self.window_width = 400
-        self.sidebar_width = 200
-        self.main_window_width = 1000
+        self.sidebar_width = 181
+        self.main_window_width = 800
         self.side_window_width = 200
         self.side_bg_color = 'white'
         self.main_bg_color = 'white'
@@ -81,10 +82,6 @@ class MainGUI():
             height=self.window_height, borderwidth=5)
         sidebar.pack(expand=True, fill='both', side='left', anchor='nw')
 
-        refresh_button = tk.Button(self.root, text="Refresh", command=self.show_quakes)
-        refresh_button.pack()
-        refresh_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.01, rely=.013)
-
         # mag_combobox = ttk.Combobox(self.root, values=('this', 'that', 'and the other'))
         # mag_combobox.pack()
         # mag_combobox.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.03, rely=.22, )
@@ -92,6 +89,19 @@ class MainGUI():
         # get_link_button = tk.Button(self.root, text="Go to link", command=self.show_quakes)
         # get_link_button.pack()
         # get_link_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=0.3, rely=.24)
+
+        logo_unconv = Image.open("images/usgs.jpg")
+        logo = ImageTk.PhotoImage(logo_unconv)
+
+        # refresh_button = tk.Button(self.root, text="Refresh", command=self.show_quakes)
+        # refresh_button.pack()
+        # refresh_button.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.01, rely=.013)
+
+        logo_label = Label(self.root, image=logo)
+        logo_label.image = logo
+        logo_label.pack()
+        logo_label.place(bordermode='outside', relx=.01, rely=.013)
+
 
         quit_button = tk.Button(self.root, text="Quit", command=quit)
         quit_button.pack()
@@ -118,10 +128,7 @@ class MainGUI():
         def populate_events(filter):
             for i in tv.get_children():
                 tv.delete(i)
-            # try:
-            #     tv.destroy()
-            # except:
-            #     print("No table yet")
+            tsunami_count = 0
             for q in quakes['features']:
                 url = q['properties']['url']
                 loc = q['properties']['place']
@@ -159,7 +166,6 @@ class MainGUI():
                     QuakeFrame.LoadTable(self.main_quakes_day, loc=loc, link=url, mag=mag, coord=coord, tsunami=tsunami,
                                  time_utc=time_readable, date_utc=date_readable)
 
-                tsunami_count = 0
                 try:
                     try:
                         if filter == "Tsunamis Only":
@@ -176,9 +182,6 @@ class MainGUI():
                 except:
                     "Nothing chosen"
 
-                if tsunami_count == 0:
-                    print('No tsunamis reported.')
-
                 try:
                     country = loc_split[1]
                     try:
@@ -189,6 +192,8 @@ class MainGUI():
                         break
                 except:
                     break
+            if tsunami_count == 0:
+                    print('No tsunamis reported.')
 
         # columns = ()
             country_list.sort()
@@ -212,7 +217,7 @@ class MainGUI():
         populate_events(locvar.get())
         loc_combobox.bind('<<ComboboxSelected>>', select_location)
         loc_combobox.pack()
-        loc_combobox.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.01, rely=.12)
+        loc_combobox.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.01, rely=.15)
         loc_combobox['values'] = country_list
         loc_combobox.current(0)
 
@@ -222,7 +227,7 @@ class MainGUI():
         event_combobox.bind('<<ComboboxSelected>>', select_event_type)
         event_combobox.current(0)
         event_combobox.pack()
-        event_combobox.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.01, rely=.24)
+        event_combobox.place(bordermode='outside', height=50, width=self.sidebar_width, relx=.01, rely=.25)
 
 
         self.main_quakes_day.pack(expand=True, fill='both', side='right')
@@ -244,16 +249,17 @@ class MainGUI():
         # events = soup.find('a')
         # print(events)
         # soup = BeautifulSoup(urlopen(item_url))A
-        links = soup.find_all('a')
-        for link in links:
-            print(link.get("href"))
+        # links = soup.find_all('a')
+        # for link in links:
+        #     print(link.get("href"))
+        print(soup)
+        # text = soup.find_all('div class', 'general-text')
+        # for words in text:
+        #     print(words.get("p"))
         # print(soup)
         # tables = soup.find_all('footer class', class_='site-commonav')
         # print(tables)
         # print(soup.prettify()[0:5000])
-        Image("http://earthquake.usgs.gov/template/images/usgs.jpg")
-
-
         # for child in children:
         #     print(tv.set(child, column="#2"))
         print('You clicked on', tv.item(item, 'text'))
