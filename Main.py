@@ -237,23 +237,30 @@ class MainGUI():
     def select_item(self, event):
         item = tv.selection()[0]
         item_url = tv.set(item, column='#1')
-        # r = requests.get(item_url)
+        r = requests.get(item_url)
         hazards_url = "http://earthquake.usgs.gov/hazards/products/scenario/"
         r = requests.get(hazards_url)
         data = r.text
 
         # r = urllib.urlopen('')
 
-        # webbrowser.open(item_url)
-        soup = BeautifulSoup(data, "html.parser")
+        webbrowser.open(item_url)
+
+        # Right here is where I couldn't get the data inside the page source that I wanted
+        # They include div classes that it just wouldn't access for some reason.
+        # I understand how it works to an extent but it wasn't clear how to get to
+        # Inner classes within the html source.
+
+        # soup = BeautifulSoup(data, "html.parser")
         # events = soup.find('a')
         # print(events)
         # soup = BeautifulSoup(urlopen(item_url))A
         # links = soup.find_all('a')
         # for link in links:
         #     print(link.get("href"))
-        print(soup)
+        # print(soup)
         # text = soup.find_all('div class', 'general-text')
+        # text = soup.find_all
         # for words in text:
         #     print(words.get("p"))
         # print(soup)
@@ -262,6 +269,8 @@ class MainGUI():
         # print(soup.prettify()[0:5000])
         # for child in children:
         #     print(tv.set(child, column="#2"))
+
+
         print('You clicked on', tv.item(item, 'text'))
 
 
